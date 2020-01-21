@@ -1,4 +1,3 @@
-import Quill from 'quill'
 import TableColumnTool from './modules/table-column-tool'
 import TableSelection from './modules/table-selection'
 import TableOperationMenu from './modules/table-operation-menu'
@@ -26,26 +25,26 @@ import {
   TableViewWrapper,
   rowId,
   cellId
-} from './formats/table';
+} from './formats/table'
 
 class BetterTable extends Module {
   static register() {
-    Quill.register(TableCol, true);
-    Quill.register(TableColGroup, true);
-    Quill.register(TableCellLine, true);
-    Quill.register(TableCell, true);
-    Quill.register(TableRow, true);
-    Quill.register(TableBody, true);
-    Quill.register(TableContainer, true);
-    Quill.register(TableViewWrapper, true);
-    Quill.register(TableViewWrapper, true);
+    Quill.register(TableCol, true)
+    Quill.register(TableColGroup, true)
+    Quill.register(TableCellLine, true)
+    Quill.register(TableCell, true)
+    Quill.register(TableRow, true)
+    Quill.register(TableBody, true)
+    Quill.register(TableContainer, true)
+    Quill.register(TableViewWrapper, true)
+    Quill.register(TableViewWrapper, true)
     // register customized Header，overwriting quill built-in Header
     // Quill.register('formats/header', Header, true);
   }
 
   constructor(quill, options) {
-    super(quill, options);
-
+    super(quill, options)
+    this.quill = quill
     // handle click on quill-better-table
     this.quill.root.addEventListener('click', (evt) => {
       // bugfix: evt.path is undefined in Safari, FF, Micro Edge
@@ -131,13 +130,13 @@ class BetterTable extends Module {
       { key: 'Backspace' },
       {},
       function (range, context) {
-        if (range.index === 0 || this.quill.getLength() <= 1) return true;
-        const [line] = this.quill.getLine(range.index);
+        if (range.index === 0 || this.quill.getLength() <= 1) return true
+        const [line] = this.quill.getLine(range.index)
         if (context.offset === 0) {
-          const [prev] = this.quill.getLine(range.index - 1);
+          const [prev] = this.quill.getLine(range.index - 1)
           if (prev != null) {
             if (prev.statics.blotName === 'table-cell-line' &&
-              line.statics.blotName !== 'table-cell-line') return false;
+              line.statics.blotName !== 'table-cell-line') return false
           }
         }
         return true
@@ -162,15 +161,15 @@ class BetterTable extends Module {
   }
 
   getTable(range = this.quill.getSelection()) {
-    if (range == null) return [null, null, null, -1];
-    const [cellLine, offset] = this.quill.getLine(range.index);
+    if (range == null) return [null, null, null, -1]
+    const [cellLine, offset] = this.quill.getLine(range.index)
     if (cellLine == null || cellLine.statics.blotName !== TableCellLine.blotName) {
-      return [null, null, null, -1];
+      return [null, null, null, -1]
     }
-    const cell = cellLine.tableCell();
-    const row = cell.row();
-    const table = row.table();
-    return [table, row, cell, offset];
+    const cell = cellLine.tableCell()
+    const row = cell.row()
+    const table = row.table()
+    return [table, row, cell, offset]
   }
 
   insertTable(rows, columns) {
@@ -181,7 +180,7 @@ class BetterTable extends Module {
 
     if (isInTableCell(currentBlot)) {
       console.warn(`Can not insert table into a table cell.`)
-      return;
+      return
     }
 
     delta.insert('\n')
@@ -194,7 +193,7 @@ class BetterTable extends Module {
     delta = new Array(rows).fill(0).reduce(memo => {
       let tableRowId = rowId()
       return new Array(columns).fill('\n').reduce((memo, text) => {
-        memo.insert(text, { 'table-cell-line': {row: tableRowId, cell: cellId()} });
+        memo.insert(text, { 'table-cell-line': { row: tableRowId, cell: cellId() } })
         return memo
       }, memo)
     }, delta)
@@ -203,13 +202,13 @@ class BetterTable extends Module {
     this.quill.setSelection(range.index + columns + 1, Quill.sources.API)
   }
 
-  showTableTools (table, quill, options) {
+  showTableTools(table, quill, options) {
     this.table = table
     this.columnTool = new TableColumnTool(table, quill, options)
     this.tableSelection = new TableSelection(table, quill, options)
   }
 
-  hideTableTools () {
+  hideTableTools() {
     this.columnTool && this.columnTool.destroy()
     this.tableSelection && this.tableSelection.destroy()
     this.tableOperationMenu && this.tableOperationMenu.destroy()
@@ -252,29 +251,29 @@ BetterTable.keyboardBindings = {
       if (this.quill.selection && this.quill.selection.composing) return
       const Scope = Quill.imports.parchment.Scope
       if (range.length > 0) {
-        this.quill.scroll.deleteAt(range.index, range.length); // So we do not trigger text-change
+        this.quill.scroll.deleteAt(range.index, range.length) // So we do not trigger text-change
       }
       const lineFormats = Object.keys(context.format).reduce((formats, format) => {
         if (
           this.quill.scroll.query(format, Scope.BLOCK) &&
           !Array.isArray(context.format[format])
         ) {
-          formats[format] = context.format[format];
+          formats[format] = context.format[format]
         }
-        return formats;
-      }, {});
+        return formats
+      }, {})
       // insert new cellLine with lineFormats
-      this.quill.insertText(range.index, '\n', lineFormats['table-cell-line'], Quill.sources.USER);
+      this.quill.insertText(range.index, '\n', lineFormats['table-cell-line'], Quill.sources.USER)
       // Earlier scroll.deleteAt might have messed up our selection,
       // so insertText's built in selection preservation is not reliable
-      this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
-      this.quill.focus();
+      this.quill.setSelection(range.index + 1, Quill.sources.SILENT)
+      this.quill.focus()
       Object.keys(context.format).forEach(name => {
-        if (lineFormats[name] != null) return;
-        if (Array.isArray(context.format[name])) return;
-        if (name === 'link') return;
-        this.quill.format(name, context.format[name], Quill.sources.USER);
-      });
+        if (lineFormats[name] != null) return
+        if (Array.isArray(context.format[name])) return
+        if (name === 'link') return
+        this.quill.format(name, context.format[name], Quill.sources.USER)
+      })
     },
   },
 
@@ -288,7 +287,7 @@ BetterTable.keyboardBindings = {
       if (target && target.statics.blotName === 'table-view') {
         const targetCell = target.table().rows()[0].children.head
         const targetLine = targetCell.children.head
-        
+
         this.quill.setSelection(
           targetLine.offset(this.quill.scroll),
           0,
@@ -309,7 +308,7 @@ BetterTable.keyboardBindings = {
         const rows = target.table().rows()
         const targetCell = rows[rows.length - 1].children.head
         const targetLine = targetCell.children.head
-        
+
         this.quill.setSelection(
           targetLine.offset(this.quill.scroll),
           0,
@@ -323,7 +322,7 @@ BetterTable.keyboardBindings = {
   }
 }
 
-function makeTableArrowHandler (up) {
+function makeTableArrowHandler(up) {
   return {
     key: up ? 'ArrowUp' : 'ArrowDown',
     collapsed: true,
@@ -348,7 +347,7 @@ function makeTableArrowHandler (up) {
           cur = cur.prev
           totalColspanOfCur += parseInt(cur.formats()['colspan'], 10)
         }
-        
+
         while (targetCell.next != null && totalColspanOfTargetCell < totalColspanOfCur) {
           targetCell = targetCell.next
           totalColspanOfTargetCell += parseInt(targetCell.formats()['colspan'], 10)
@@ -374,16 +373,16 @@ function makeTableArrowHandler (up) {
           }
         }
       }
-      return false;
+      return false
     },
-  };
+  }
 }
 
-function isTableCell (blot) {
+function isTableCell(blot) {
   return blot.statics.blotName === TableCell.blotName
 }
 
-function isInTableCell (current) {
+function isInTableCell(current) {
   return current && current.parent
     ? isTableCell(current.parent)
       ? true
@@ -391,4 +390,4 @@ function isInTableCell (current) {
     : false
 }
 
-export default BetterTable;
+export default BetterTable

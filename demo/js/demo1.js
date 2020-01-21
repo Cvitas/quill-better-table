@@ -1,4 +1,5 @@
-import QuillBetterTable from 'src/quill-better-table.js'
+import 'quill/dist/quill.snow.css'
+import QuillBetterTable from 'src/quill-better-table'
 // import better-table styles file
 import 'src/assets/quill-better-table.scss'
 
@@ -9,6 +10,7 @@ Quill.register({
 window.onload = () => {
   const quill = new Quill('#editor-wrapper', {
     theme: 'snow',
+    readOnly: false,
     modules: {
       table: false,
       'better-table': {

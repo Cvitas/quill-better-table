@@ -1,5 +1,4 @@
-import Quill from "quill"
-import { 
+import {
   TableCell,
   TableCellLine,
   CELL_IDENTITY_KEYS,

@@ -1,4 +1,3 @@
-import Quill from 'quill'
 import { css, getRelativeRect } from '../utils'
 
 // svg icons

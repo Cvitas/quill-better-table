@@ -14,26 +14,34 @@ module.exports = (env, argv) => {
     minimize = true
   } else {
     entry = {
-      'quill-better-table.js': ['./src/quill-better-table.js'],
-      'quill-better-table': './src/assets/quill-better-table.scss',
-      'demo/demo1.js': './demo/js/demo1.js'
+      // 'quill-better-table.js': ['./src/quill-better-table.js'],
+      // 'quill-better-table': './src/assets/quill-better-table.scss',
+        'demo': './demo/js/demo1.js'
     }
     minimize = false
   }
 
   return {
+    mode:'development',
     entry,
 
     optimization: {
-      minimize
+      splitChunks: {
+        // Must be specified for HtmlWebpackPlugin to work correctly.
+        // See: https://github.com/jantimon/html-webpack-plugin/issues/882
+        chunks: 'all'
+      }
     },
 
     output:{
-      filename: '[name]',
-      library: 'quillBetterTable',
-      libraryExport: 'default',
-      libraryTarget: 'umd',
-      path: path.resolve(__dirname, './dist/')
+      // filename: '[name]',
+      // library: 'quillBetterTable',
+      // libraryExport: 'default',
+      // libraryTarget: 'umd',
+      // path: path.resolve(__dirname, './dist/')
+      path: path.resolve(__dirname, './dist/'),
+      filename: 'static/js/[name].js',
+      chunkFilename: 'static/js/[name].js'
     },
 
     resolve: {
@@ -43,7 +51,6 @@ module.exports = (env, argv) => {
       },
       extensions: ['.js', '.scss', '.html']
     },
-
     externals: {
       'quill': {
         commonjs: 'quill',
@@ -52,7 +59,6 @@ module.exports = (env, argv) => {
         root: 'Quill'
       }
     },
-
     module: {
       rules: [
         {
@@ -73,13 +79,13 @@ module.exports = (env, argv) => {
           use: [{
             loader: 'html-loader',
             options: {
-              minimize: true
+              minimize: false
             }
           }]
         },
 
         {
-          test: /\.scss$/,
+          test: /\.(scss|css)$/,
           use: [
             // fallback to style-loader in development
             !isProduction ? 'style-loader' : MiniCssExtractPlugin.loader,
@@ -90,28 +96,10 @@ module.exports = (env, argv) => {
 
         {
           test: /\.js$/,
-          exclude: /(node_modules|bower_components)/,
+          // exclude: /(node_modules)/,
+          include: [/\/node_modules\/quill/],
           use: {
-            loader: 'babel-loader',
-            options: {
-              presets: [
-                [
-                  '@babel/env',
-                  {
-                    targets: {
-                      browsers: [
-                        'last 2 Chrome major versions',
-                        'last 2 Firefox major versions',
-                        'last 2 Safari major versions',
-                        'last 2 Edge major versions',
-                        'last 2 iOS major versions',
-                        'last 2 ChromeAndroid major versions',
-                      ],
-                    },
-                  }
-                ]
-              ]
-            }
+            loader: 'babel-loader'
           }
         }
       ]
@@ -134,9 +122,11 @@ module.exports = (env, argv) => {
 
     devServer:{
       host:'localhost',
-      contentBase: path.join(__dirname, './dist'),
-      port: 8080,
+      // contentBase: path.join(__dirname, './dist'),
+      port: 8765,
       hot: false
-    }
+    },
+    devtool: 'eval-source-map',
+    target: 'web'
   }
 }

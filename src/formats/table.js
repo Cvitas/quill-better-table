@@ -1,4 +1,3 @@
-import Quill from "quill"
 import { getRelativeRect } from '../utils'
 import Header from './header'
 
@@ -461,7 +460,7 @@ class TableContainer extends Container {
         row.domNode.getBoundingClientRect(),
         editorWrapper
       )
-      
+
       return rowRect.y > compareRect.y - ERROR_LIMIT &&
         rowRect.y1 < compareRect.y1 + ERROR_LIMIT
     })
