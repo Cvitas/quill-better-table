@@ -37,14 +37,14 @@ class BetterTable extends Module {
     Quill.register(TableBody, true)
     Quill.register(TableContainer, true)
     Quill.register(TableViewWrapper, true)
-    Quill.register(TableViewWrapper, true)
+    // Quill.register(TableViewWrapper, true)
     // register customized Header，overwriting quill built-in Header
     // Quill.register('formats/header', Header, true);
   }
 
   constructor(quill, options) {
     super(quill, options)
-    this.quill = quill
+    // this.quill = quill
     // handle click on quill-better-table
     this.quill.root.addEventListener('click', (evt) => {
       // bugfix: evt.path is undefined in Safari, FF, Micro Edge

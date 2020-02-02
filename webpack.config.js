@@ -1,7 +1,7 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require('path')
+const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production'
@@ -14,15 +14,16 @@ module.exports = (env, argv) => {
     minimize = true
   } else {
     entry = {
-      // 'quill-better-table.js': ['./src/quill-better-table.js'],
+      // 'quill-better-table': ['./src/quill-better-table.js'],
       // 'quill-better-table': './src/assets/quill-better-table.scss',
-        'demo': './demo/js/demo1.js'
+      'demo1': './demo/js/demo1.js',
+      'demo': './demo/js/demo.js'
     }
     minimize = false
   }
 
   return {
-    mode:'development',
+    mode: 'development',
     entry,
 
     optimization: {
@@ -33,7 +34,7 @@ module.exports = (env, argv) => {
       }
     },
 
-    output:{
+    output: {
       // filename: '[name]',
       // library: 'quillBetterTable',
       // libraryExport: 'default',
@@ -105,11 +106,18 @@ module.exports = (env, argv) => {
       ]
     },
 
-    plugins:[
+    plugins: [
       new HtmlWebpackPlugin({
-        title:'quill-better-table',
-        template:'./demo/demo1.html',
-        filename:'demo/demo1.html',
+        title: 'quill-better-table',
+        template: './demo/demo1.html',
+        filename: 'demo/demo1.html',
+        chunks: ['vendors~demo~demo1', 'demo~demo1', 'demo1']
+      }),
+      new HtmlWebpackPlugin({
+        title: 'quill-better-table2',
+        template: './demo/demo1.html',
+        filename: 'demo/demo.html',
+        chunks: ['vendors~demo~demo1', 'demo~demo1', 'demo']
       }),
 
       new MiniCssExtractPlugin({
@@ -120,8 +128,8 @@ module.exports = (env, argv) => {
       new webpack.HotModuleReplacementPlugin({})
     ],
 
-    devServer:{
-      host:'localhost',
+    devServer: {
+      host: 'localhost',
       // contentBase: path.join(__dirname, './dist'),
       port: 8765,
       hot: false

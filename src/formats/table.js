@@ -102,7 +102,7 @@ class TableCellLine extends Block {
 }
 TableCellLine.blotName = "table-cell-line"
 TableCellLine.ClassName = "qlbt-cell-line"
-TableCellLine.tagName = "DIV"
+TableCellLine.tagName = "cell-content"
 
 class TableCell extends Container {
   checkMerge() {

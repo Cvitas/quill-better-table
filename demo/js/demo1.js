@@ -6,7 +6,6 @@ import 'src/assets/quill-better-table.scss'
 Quill.register({
   'modules/better-table': QuillBetterTable
 }, true)
-
 window.onload = () => {
   const quill = new Quill('#editor-wrapper', {
     theme: 'snow',
